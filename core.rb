@@ -6,7 +6,7 @@ require 'yo-ruby'
 Yo.api_key = 'cd53977e-64cd-4249-92ba-fd22d7356b48'
 
 $redis = Redis.new
-status_ok = {:status => "ok"}
+status_ok = {status: "ok"}
 
 def json(msg)
   {msg: msg}.to_json
@@ -17,7 +17,7 @@ get '/' do
   error 403, json('Please do not access root')
 end
 
-post '/1/api/push', :provides => :json do
+post '/1/api/push', provides: :json do
   content_type :json
   data = JSON.parse(request.body.read)
 
@@ -25,8 +25,8 @@ post '/1/api/push', :provides => :json do
     if data.has_key? "token"
       # Try adding the message to the redis list
       $redis.lpush "msgQ_#{data['name']}", {
-        :msg => data['msg'],
-        :nick => data['nick']
+        msg: data['msg'],
+        nick: data['nick']
       }
     else
       error 500, json('Invalid code')
@@ -58,7 +58,7 @@ get '/1/:name/pop/:num' do
     data = []
     num.times {|x| data.push $redis.rpop "msgQ_#{name}"}
     {
-      :data => data
+      data: data
     }.to_json
   else
     error 500, json('User does not exist')
@@ -72,7 +72,7 @@ get '/1/:name/view/:num' do
   if $redis.exists("msgQ_#{name}")
     a = $redis.lrange "msgQ_#{name}", -1 * num, -1
     r = {
-      :data => a
+      data: a
     }
     r.to_json
   else
