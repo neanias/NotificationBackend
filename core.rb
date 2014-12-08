@@ -57,9 +57,8 @@ get '/1/:name/pop/:num' do
   if $redis.exists("msgQ_#{name}")
     data = []
     num.times {|x| data.push $redis.rpop "msgQ_#{name}"}
-    {
-      data: data
-    }.to_json
+
+    {data: data}.to_json
   else
     error 500, json('User does not exist')
   end
@@ -70,11 +69,7 @@ get '/1/:name/view/:num' do
   num = params['num'].to_i
 
   if $redis.exists("msgQ_#{name}")
-    a = $redis.lrange "msgQ_#{name}", -1 * num, -1
-    r = {
-      data: a
-    }
-    r.to_json
+    {data: $redis.lrange("msgQ_#{name}", -1 * num, -1)}.to_json
   else
     error 500, json('user does not exist')
   end
