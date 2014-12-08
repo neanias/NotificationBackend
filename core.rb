@@ -56,7 +56,7 @@ get '/1/:name/pop/:num' do
 
   if $redis.exists("msgQ_#{name}")
     data = []
-    num.times {|x| data.push $redis.rpop "msgQ_#{name}"}
+    num.times {|x| data.push($redis.rpop("msgQ_#{name}"))}
 
     {data: data}.to_json
   else
